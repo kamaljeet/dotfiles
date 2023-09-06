@@ -1,0 +1,120 @@
+# this file has to be sourced from .bashrc
+
+# add below for many different tools to work properly
+# such as pycharm to display preview of rst file
+export LC_ALL=en_US.UTF-8  
+export LANG=en_US.UTF-8
+
+# check weather
+weather() { curl -s "wttr.in/$1?m1"}
+
+# timer
+function count() {
+  total=$1
+  for ((i=total; i>0; i--)); do sleep 1; printf "Time remaining $i secs \r"; done
+  echo -e "\a"
+}
+
+# cd .. multiple times
+function up() {
+  times=$1
+  while [ "$times" -gt "0" ]; do
+    cd ..
+    times=$(($times - 1))
+  done
+}
+
+# extract archived file by checking its extension
+function extract () {
+  if [ -f $1 ] ; then
+    case $1 in
+      *.tar.bz2)   tar xvjf $1    ;;
+      *.tar.gz)    tar xvzf $1    ;;
+      *.tar.xz)    tar Jxvf $1    ;;
+      *.bz2)       bunzip2 $1     ;;
+      *.rar)       rar x $1       ;;
+      *.gz)        gunzip $1      ;;
+      *.tar)       tar xvf $1     ;;
+      *.tbz2)      tar xvjf $1    ;;
+      *.tgz)       tar xvzf $1    ;;
+      *.zip)       unzip -d `echo $1 | sed 's/\(.*\)\.zip/\1/'` $1;;
+      *.Z)         uncompress $1  ;;
+      *.7z)        7z x $1        ;;
+      *)           echo "don't know how to extract '$1'" ;;
+    esac
+  else
+    echo "'$1' is not a valid file!"
+  fi
+}
+
+# change dir and list files in it
+alias lcd=changeDirectory
+function changeDirectory {
+ cd $1 ; ls -la
+}
+
+# quick jumps to parent directories
+alias .='cl ..'
+alias ..='cl ../..'
+alias ...='cl ../../..'
+
+# quick search replace across a file from terminal. use with caution
+function replace() {
+  perl -i -pe "s/$2/$3/g" $1;
+}
+
+# cd + ls: 
+function cs () { cd $1 ls -a }
+
+# transfer path: save the current path to a hidden file:
+function tp () { pwd > ~/.sp }
+
+# go to transfer path: goes where the previously saved tp points:
+function gtp () { cs `cat ~/.sp` }
+
+# cat with color:
+function ccat () { source-highlight -fesc -i $1 }
+
+# So it’s basically a “cd” command that will create the directory (and any missing directories in its path) if it’s missing.
+cm () { mkdir -p -- "$1" && cd -- "$1"; }
+
+
+### Taking notes
+
+# take a note
+function note {
+  if [ -z "$1" ]; then
+    echo "No note entered."
+  else
+    echo "$@" >> "$HOME/docs/_line_notes"
+  fi
+}
+
+# display notes
+function notes {
+  FN="$HOME/docs/_line_notes"
+  if [ ! -f "$FN" ]; then
+    echo "No notes (file missing)."
+    return
+  fi
+
+  if [ -z "$1" ]; then
+    LINECOUNT="10"
+  else
+    LINECOUNT="$1"
+  fi
+  LNUM=$(wc -l "$FN"|cut -d " " -f1)
+  echo "Showing max $LINECOUNT of $LNUM notes."
+  tail "$FN" -n "$LINECOUNT"
+}
+
+# clear all notes
+function clearnotes {
+  rm "$HOME/docs/_line_notes"
+  touch "$HOME/docs/_line_notes"
+}
+
+# Using note, I can make a quick note like so:
+# $ note hjalfi asm 1:20
+###
+

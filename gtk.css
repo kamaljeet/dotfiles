@@ -1,0 +1,10 @@
+/* file: /home/kj/.config/gtk-3.0/gtk.css */
+/* below settings for the workspace switcher colours */
+/* command to restart panet: xfce4-panel -r */
+wnck-pager:selected {
+    background-color: lightblue; }
+wnck-pager:hover {
+    background-color: white; }
+wnck-pager {
+    background-color: lightgrey; }
+
